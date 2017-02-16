@@ -44,8 +44,8 @@ router.get('/webhook', function(req, res) {
   }
 });
 
-
-router.get('/foo', function (req, res) {
+//TODO give the option to send an account name, we gonna use probably only two accounts in the demo so, can be only a hardcoded if
+router.get('/account', function (req, res) {
   getAccountForDefaultCostumer(function(data) {
     console.log(data.accountBalance);
     //discover why accountBalance is not sent back but the entire object is
