@@ -46,11 +46,15 @@ router.get('/webhook', function(req, res) {
 
 
 router.get('/foo', function (req, res) {
-  getCostumer(function(data) { res.send(data);  } )
+  getAccountForDefaultCostumer(function(data) {
+    console.log(data.accountBalance);
+    //discover why accountBalance is not sent back but the entire object is
+    res.send(data);
+  });
 
 });
 
-function getCostumer(callback) {
+function getAccountForDefaultCostumer(callback) {
 
   return https.get({
     host: 'bluebank.azure-api.net',
@@ -66,11 +70,37 @@ function getCostumer(callback) {
       console.log("Got error: " + e.message);
     });
     response.on('end', function() {
+      console.log(body);
+      var costumer = JSON.parse(body)[0];
+      console.log(costumer.id);
+      getAccount(costumer.id, callback);
+    });
+  });
 
-      // TODO get account based on costumerID 
-      callback({
-        result: body
-      });
+};
+
+function getAccount(costumerId, callback) {
+
+  return https.get({
+    host: 'bluebank.azure-api.net',
+    path: '/api/v0.6.3/customers/' + costumerId +"/accounts?",
+    headers: {"Ocp-Apim-Subscription-Key": devKey, "bearer": bearer, accept: '*/*'}
+  }, function(response) {
+    var body = '';
+    response.on('data', function(d) {
+      body += d;
+    });
+    response.on('error', function(e) {
+      console.log("Got error: " + e.message);
+    });
+    response.on('end', function() {
+      //prints to guarantee that all the data was flushed
+      console.log(body);
+      var account = JSON.parse(body)[0];
+      console.log(account);
+      //getAccount(costumer.id, callback);
+
+      callback(account);
     });
   });
 
