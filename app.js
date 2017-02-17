@@ -1,7 +1,5 @@
 var PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 var MESSENGER_VALIDATION_TOKEN = process.env.MESSENGER_VALIDATION_TOKEN;
-var BANK_DEV_KEY = process.env.BANK_DEV_KEY;
-var BANK_BEARER = process.env.BANK_BEARER;
 
 var express = require('express'),
     config = require('./config/config'),
@@ -236,7 +234,7 @@ function callSendAPI(messageData) {
 
 function saveMoney(recipientId, amountToSave, messageText) {
   var currentAccountID = users[recipientId]["currentAccountId"];
-  var savingAccountNo = user[recipientId]["savingAccountNumber"];
+  var savingAccountNo = users[recipientId]["savingAccountNumber"];
   var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + currentAccountId +'/payments';
   var bodyStr = JSON.stringify({
       "toAccountNumber":savingAccountNo,
@@ -247,8 +245,8 @@ function saveMoney(recipientId, amountToSave, messageText) {
 
   request({
     headers: {
-      'Ocp-Apim-Subscription-Key': BANK_DEV_KEY,
-      'bearer': BANK_BEARER,
+      'Ocp-Apim-Subscription-Key': users[recipientId]['token'],
+      'bearer': users[recipientId]['bearer'],
       'Content-Type': 'application/json'
     },
     uri: queryUrl,
@@ -282,8 +280,8 @@ function checkBalance(recipientId, bankAccountId) {
 
   request({
     headers: {
-      'Ocp-Apim-Subscription-Key': BANK_DEV_KEY,
-      'bearer': BANK_BEARER
+      'Ocp-Apim-Subscription-Key': users[recipientId]['token'],
+      'bearer': users[recipientId]['bearer']
     },
     uri: queryUrl,
     method: 'GET'
