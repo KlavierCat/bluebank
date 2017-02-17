@@ -236,11 +236,10 @@ function checkBalance(recipientId, bankAccountId) {
 
       console.log(body);
 
-      var accountBalance = body.response.accountBalance;
-      var accountCurrency = body.response.accountCurrency;
+      var parsedBody = JSON.parse(body);
 
-      console.log(body.response.accountBalance);
-      console.log(body.response.accountCurrency);
+      var accountBalance = parsedBody.accountBalance;
+      var accountCurrency = parsedBody.accountCurrency;
 
       var accountBalanceMessage = "Account balance: " + accountBalance + " " + accountCurrency;
 
