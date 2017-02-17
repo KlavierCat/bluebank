@@ -25,6 +25,15 @@ var users = {
     'currentAccountId':'58a1737f06d0f9e7189d1db7',
     'savingAccountId':'58a1737f06d0f9e7189d1db8',
     'savingAccountNumber':'50000376'
+  },
+  1350856231655433: {
+    'givenName':'Julia',
+    'token':'af209212b92c4334b262e8f2c4dc9e7b',
+    'bearer':'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXN0b21lcklkIjoiNThhNzEyNGUzMDMyMmU4MzIzN2Y3MzdjIiwicm9sZSI6InVzZXIiLCJwcmltYXJ5U3Vic2NyaWJlcktleSI6ImFmMjA5MjEyYjkyYzQzMzRiMjYyZThmMmM0ZGM5ZTdiIiwiaWF0IjoxNDg3Mzc0MzM2fQ.BpkSGYIhh_RMvI0BZsTsAGtqJSNWt0nS62ezAO3m2ek',
+    'customerId':'58a7124e30322e83237f737c',
+    'currentAccountId':'58a7124e30322e83237f737d',
+    'savingAccountId':'58a7124e30322e83237f737c',
+    'savingAccountNumber':'50000390'
   }
 };
 
