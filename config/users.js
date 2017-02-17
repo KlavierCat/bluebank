@@ -3,7 +3,8 @@ var users = {
     'givenName':'Panpan',
     'customerId':'58a6003923ccb9d022065452',
     'currentAccountId':'58a6003923ccb9d022065453',
-    'savingAccountId':'58a6003a23ccb9d022065454'
+    'savingAccountId':'58a6003a23ccb9d022065454',
+    'savingAccountNumber':'50000389'
   },
   000000000000000: {
     'givenName':'Mauricio',

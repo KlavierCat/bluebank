@@ -6,6 +6,7 @@ var BANK_BEARER = process.env.BANK_BEARER;
 var express = require('express'),
     config = require('./config/config'),
     users = require('./config/users'),
+    mm = require('minimatch'),
     bodyParser = require('body-parser'),
     request = require('request');
 
@@ -74,16 +75,32 @@ function receivedMessage(event) {
   var messageAttachments = message.attachments;
 
   if (messageText) {
-
     // If we receive a text message, check to see if it matches a keyword
     // and send back the example. Otherwise, just echo the text we received.
+
+    messageText = messageText.toLowerCase();
+
+    // user wants to save money
+    if (mm(messageText, "save *")) {
+      var amountToSave = parseInt(messageText.replace(/[^0-9\.]/g, ''), 10);
+
+      if (isNaN(amountToSave)){
+        console.log('user did not include a valid amount to save in message: ' + messageText);
+        // send message scolding them
+      } else {
+        console.log("User wants to save: " + amountToSave);
+        saveMoney(senderID, amountToSave, messageText);
+      }
+
+      return;
+    }
+
     switch (messageText) {
       case 'generic':
         sendGenericMessage(senderID);
         break;
 
       case 'current account balance':
-      case 'current':
       case 'current account':
       case 'check current account balance':
         console.log('user checking current account ' + users[senderID]["currentAccountId"]);
@@ -92,7 +109,6 @@ function receivedMessage(event) {
         break;
 
       case 'saving account balance':
-      case 'saving':
       case 'saving account':
       case 'check saving account balance':
         console.log('user checking saving account ' + users[senderID]["savingAccountId"]);
@@ -212,6 +228,49 @@ function callSendAPI(messageData) {
         messageId, recipientId);
     } else {
       console.error("Unable to send message.");
+      console.error(response);
+      console.error(error);
+    }
+  });
+}
+
+function saveMoney(recipientId, amountToSave, messageText) {
+  var currentAccountID = users[recipientId]["currentAccountId"];
+  var savingAccountNo = user[recipientId]["savingAccountNumber"];
+  var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + currentAccountId +'/payments';
+  var bodyStr = JSON.stringify({
+      "toAccountNumber":savingAccountNo,
+      "toSortCode":"839999",
+      "paymentReference":messageText + ", sent from Facebook Money Sender",
+      "paymentAmount":amountToSave.toString()
+    });
+
+  request({
+    headers: {
+      'Ocp-Apim-Subscription-Key': BANK_DEV_KEY,
+      'bearer': BANK_BEARER,
+      'Content-Type': 'application/json'
+    },
+    uri: queryUrl,
+    method: 'POST',
+    body: bodyStr
+
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      console.log("Successfully saved " + amountToSave);
+
+      var messageData = {
+        recipient: {
+          id: recipientId
+        },
+        message: {
+          text: 'Saved ' + amountToSave + '. Check your balance by typing "saving account balance".'
+        }
+      };
+
+      callSendAPI(messageData);
+    } else {
+      console.error("Unable to inquire account balance");
       console.error(response);
       console.error(error);
     }
