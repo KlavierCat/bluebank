@@ -1,8 +1,11 @@
 var PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 var MESSENGER_VALIDATION_TOKEN = process.env.MESSENGER_VALIDATION_TOKEN;
+var BANK_DEV_KEY = process.env.BANK_DEV_KEY;
+var BANK_BEARER = process.env.BANK_BEARER;
 
 var express = require('express'),
     config = require('./config/config'),
+    users = require('./config/users'),
     bodyParser = require('body-parser'),
     request = require('request');
 
@@ -77,6 +80,24 @@ function receivedMessage(event) {
     switch (messageText) {
       case 'generic':
         sendGenericMessage(senderID);
+        break;
+
+      case 'current account balance':
+      case 'current':
+      case 'current account':
+      case 'check current account balance':
+        console.log('user checking current account ' + users[senderID]["currentAccountId"]);
+        var currentAccountID = users[senderID]["currentAccountId"];
+        checkBalance(senderID, currentAccountID);
+        break;
+
+      case 'saving account balance':
+      case 'saving':
+      case 'saving account':
+      case 'check saving account balance':
+        console.log('user checking saving account ' + users[senderID]["savingAccountId"]);
+        var savingAccountID = users[senderID]["savingAccountId"];
+        checkBalance(senderID, savingAccountID);
         break;
 
       default:
@@ -197,6 +218,73 @@ function callSendAPI(messageData) {
   });
 }
 
+function checkBalance(recipientId, bankAccountId) {
+  var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + bankAccountId;
+
+  request({
+    headers: {
+      'Ocp-Apim-Subscription-Key': BANK_DEV_KEY,
+      'bearer': BANK_BEARER
+    },
+    uri: queryUrl,
+    method: 'GET'
+
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      console.log("Successfully sent balance inquiry for account %s for user %s",
+        bankAccountId, recipientId);
+
+      console.log(body);
+
+      var accountBalance = body.response.accountBalance;
+      var accountCurrency = body.response.accountCurrency;
+
+      console.log(body.response.accountBalance);
+      console.log(body.response.accountCurrency);
+
+      var accountBalanceMessage = "Account balance: " + accountBalance + " " + accountCurrency;
+
+      var messageData = {
+        recipient: {
+          id: recipientId
+        },
+        message: {
+          text: accountBalanceMessage
+        }
+      };
+
+      callSendAPI(messageData);
+    } else {
+      console.error("Unable to inquire account balance");
+      console.error(response);
+      console.error(error);
+    }
+  });
+}
+
+
+
+function callBankAPI(accountId) {
+  request({
+    uri: 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + accountId,
+    qs: { access_token: PAGE_ACCESS_TOKEN },
+    method: 'POST',
+    json: messageData
+
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      var recipientId = body.recipient_id;
+      var messageId = body.message_id;
+
+      console.log("Successfully sent generic message with id %s to recipient %s",
+        messageId, recipientId);
+    } else {
+      console.error("Unable to send message.");
+      console.error(response);
+      console.error(error);
+    }
+  });
+}
 
 module.exports = require('./config/express')(app, config);
 
