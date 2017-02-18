@@ -102,9 +102,10 @@ function receivedMessage(event) {
       sendMoney(senderID, recipientAccountNo, transactionAmount, paymentReference, serverFeedbackToUser);
 
       return;
-    } else if (mm(messageText, "receive *")){
+    } else if (mm(messageText, "qrcode *")){
 		//Create the QrCOde and send to fb
 		var amountToSend = parseInt(messageText.replace(/[^0-9\.]/g, ''), 10);
+		console.log("generate qrCode: "+amountToSend);
 		if (isNaN(amountToSave)){
         	console.log('user did not include a valid amount to save in message: ' + messageText);
       	} 
@@ -400,7 +401,7 @@ function createQrCode(sellerID, amountToSend) {
  }
 
 
-function sendImageMessage(recipientId, imagePath) {
+function sendImageMessage(recipientId, sellerID) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -409,7 +410,7 @@ function sendImageMessage(recipientId, imagePath) {
       attachment:{
       	type:"image", 
       	payload:{
-      		url:"https://hellopanpan.azurewebsites.net/img/qrcode83787384783793840.png"
+      		url:SERVER_URL+"/img/qrcode"+sellerID+".png"
       	}
       }
     }
