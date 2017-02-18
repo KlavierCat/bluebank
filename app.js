@@ -254,7 +254,7 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
 
   }, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log("Successfully send: " + amountToSave);
+      console.log("Successfully send: " + transactionAmount);
 
       var messageData = {
         recipient: {
