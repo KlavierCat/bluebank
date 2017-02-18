@@ -234,6 +234,37 @@ function sendTextMessage(recipientId, messageText) {
   callSendAPI(messageData);
 }
 
+
+
+function sendImageMessage(recipientId, imagePath) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment:{type:"image", payload:{}}
+    },
+    filedata : "@" + imagePath + ";type=image/png"
+
+  };
+
+  request.post({
+    headers: {'content-type' : 'application/x-www-form-urlencoded'},
+    uri:     'https://graph.facebook.com/v2.6/me/messages',
+    qs: { access_token: "contigobrillaelsol" },
+    form:    messageData
+  }, function(error, response, body){
+    console.log(body);
+  });
+}
+//TODO test if this send image message is working
+//sendImageMessage("1217825631647606", "./png_sample.png");
+app.get('/imageMessageToMauricio', function(req, res) {
+  sendImageMessage("1217825631647606", "./png_sample.png");
+  res.status(200).send({"foo" : "bar"});
+});
+
+
 function callSendAPI(messageData) {
   request({
     uri: 'https://graph.facebook.com/v2.6/me/messages',
