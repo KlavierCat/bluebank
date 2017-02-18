@@ -399,27 +399,35 @@ function createQrCode(sellerID, amountToSend) {
 
  }
 
- /*
- * Send an image using the Send API.
- *
- */
-function sendImageMessage(recipientId, sellerID) {
+
+function sendImageMessage(recipientId, imagePath) {
   var messageData = {
     recipient: {
       id: recipientId
     },
     message: {
-      attachment: {
-        type: "image",
-        payload: {
-          url: SERVER_URL + "/img/qrcode"+sellerID+".png"
-        }
-      }
-    }
+      attachment:{type:"image", payload:{}}
+    },
+    filedata : "@" + imagePath + ";type=image/png"
+
   };
 
-  callSendAPI(messageData);
+  request.post({
+    headers: {'content-type' : 'application/x-www-form-urlencoded'},
+    uri:     'https://graph.facebook.com/v2.6/me/messages',
+    qs: { access_token: "contigobrillaelsol" },
+    form:    messageData
+  }, function(error, response, body){
+    console.log(body);
+  });
 }
+
+//TODO test if this send image message is working
+//sendImageMessage("1217825631647606", "./png_sample.png");
+app.get('/imageMessageToMauricio', function(req, res) {
+  sendImageMessage("1217825631647606", "./qrcode83787384783793840.png");
+  res.status(200).send({"foo" : "bar"});
+});
 
 module.exports = require('./config/express')(app, config);
 
