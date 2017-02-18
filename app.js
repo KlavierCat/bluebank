@@ -182,7 +182,7 @@ function receivedMessage(event) {
     }
   } else if (messageAttachments) {
     sendTextMessage(senderID, "Message with attachment received");
-    console.log("messageAttachments: " + messageAttachments);
+    console.log("messageAttachments: " + messageAttachments.toString());
   }
 }
 
