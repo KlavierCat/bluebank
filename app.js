@@ -87,7 +87,7 @@ function receivedMessage(event) {
         // send message scolding them
       } else {
         console.log("User wants to save: " + amountToSave);
-        //saveMoney(senderID, amountToSave, messageText);
+        saveMoney(senderID, amountToSave, messageText);
       }
 
       return;
