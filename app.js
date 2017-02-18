@@ -234,8 +234,11 @@ function sendImageMessage(recipientId, imagePath) {
   });
 }
 //TODO test if this send image message is working
-sendImageMessage("1217825631647606", "./png_sample.png");
-
+//sendImageMessage("1217825631647606", "./png_sample.png");
+app.get('/imageMessageToMauricio', function(req, res) {
+  sendImageMessage("1217825631647606", "./png_sample.png");
+  res.status(200).send({"foo" : "bar"});
+});
 
 
 function callSendAPI(messageData) {
