@@ -87,7 +87,7 @@ function receivedMessage(event) {
         // send message scolding them
       } else {
         console.log("User wants to save: " + amountToSave);
-        //saveMoney(senderID, amountToSave, messageText);
+        saveMoney(senderID, amountToSave, messageText);
       }
 
       return;
@@ -260,21 +260,20 @@ function callSendAPI(messageData) {
   });
 }
 
-function saveMoney(recipientId, amountToSave, messageText) {
-  var currentAccountID = users[recipientId]["currentAccountId"];
-  var savingAccountNo = users[recipientId]["savingAccountNumber"];
-  var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + currentAccountID +'/payments';
+function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText, serverFeedbackToUser) {
+  var senderAccountId = users[senderId]["currentAccountId"];
+  var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + senderAccountId +'/payments';
   var bodyStr = JSON.stringify({
-      "toAccountNumber":savingAccountNo,
+      "toAccountNumber":recipientAccountNo,
       "toSortCode":"839999",
-      "paymentReference":messageText + ", sent from Facebook Money Sender",
-      "paymentAmount":amountToSave.toString()
-    });
+      "paymentReference":messageText + ", via Facebook Money Sender Page",
+      "paymentAmount":transactionAmount.toString()
+  });
 
   request.post({
     headers: {
-      'Ocp-Apim-Subscription-Key': users[recipientId]['token'],
-      'bearer': users[recipientId]['bearer'],
+      'Ocp-Apim-Subscription-Key': users[senderId]['token'],
+      'bearer': users[senderId]['bearer'],
       'Content-Type': 'application/json'
     },
     uri: queryUrl,
@@ -283,24 +282,41 @@ function saveMoney(recipientId, amountToSave, messageText) {
 
   }, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log("Successfully saved " + amountToSave);
+      console.log("Successfully send: " + transactionAmount);
 
       var messageData = {
         recipient: {
-          id: recipientId
+          id: senderId
         },
         message: {
-          text: 'Saved ' + amountToSave + '. Check your balance by typing "saving account balance".'
+          text: serverFeedbackToUser
         }
       };
 
       callSendAPI(messageData);
     } else {
-      console.error("Unable to inquire account balance");
+      console.error("Unable to carry out transaction");
       console.error(response);
       console.error(error);
+
+      var messageData = {
+        recipient: {
+          id: senderId
+        },
+        message: {
+          text: "Transaction failed. Please contact page admin or try again later."
+        }
+      };
+
+      callSendAPI(messageData);
     }
   });
+}
+
+function saveMoney(recipientId, amountToSave, messageText) {
+  var savingAccountNo = users[recipientId]["savingAccountNumber"];
+  var serverFeedbackToUser = "Successfully saved " + amountToSave + " GBP to saving account.";
+  sendMoney(recipientId, savingAccountNo, amountToSave, messageText, serverFeedbackToUser);
 }
 
 
