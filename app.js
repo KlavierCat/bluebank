@@ -321,7 +321,7 @@ function getTransactionsHistory(customerId, accountType) {
             id: customerId
           },
           message: {
-            text: body.transactionAmount + " " + body.transactionDescription + " " + body.transactionDateTime
+            text: parsedBody.transactionAmount + " " + parsedBody.transactionDescription + " " + parsedBody.transactionDateTime
           }
         }
 
