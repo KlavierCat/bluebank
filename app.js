@@ -335,13 +335,16 @@ function getTransactionsHistory(customerId, accountType) {
       callSendAPI(transactionsHistoryMessage);
 
       for (var i = 0; i < parsedBody.length; i++) {
+        var transactionTimestamp = parsedBody[i]["transactionDateTime"].split("T");
+        var transactionTimeStr = transactionTimestamp[0] + " " + transactionTimestamp[1].slice(0,8);
+        var transactionInfoStr = parsedBody[i]["transactionAmount"] + "\n" + parsedBody[i]["transactionDescription"] + "\n" + transactionTimeStr;
 
         var messageData = {
           recipient: {
             id: customerId
           },
           message: {
-            text: parsedBody[i]["transactionAmount"] + "\n" + parsedBody[i]["transactionDescription"] + "\n" + parsedBody[i]["transactionDateTime"]
+            text: transactionInfoStr
           }
         }
 
