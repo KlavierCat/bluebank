@@ -320,7 +320,7 @@ function getTransactionsHistory(customerId, accountType) {
       var transactionHistoryMessageTest = "You don't have any transactions on your" + accountType + " account yet.";
 
       if (parsedBody.length > 0) {
-         transactionHistoryMessageTest = "Your " + accountType + " account recent transaction history is:";
+         transactionHistoryMessageTest = "That is your " + accountType + " account recent transaction history.";
       }
 
       var transactionsHistoryMessage = {
