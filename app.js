@@ -80,7 +80,7 @@ function receivedMessage(event) {
 
     // user wants to save money
     if (mm(messageText, "save *")) {
-      var amountToSave = parseInt(messageText.replace(/[^0-9\.]/g, ''), 10);
+      var amountToSave = parseInt(messageText.replace(/[^0-9\.]/g, ''), 10).toString();
 
       if (isNaN(amountToSave)){
         console.log('user did not include a valid amount to save in message: ' + messageText);
@@ -89,6 +89,15 @@ function receivedMessage(event) {
         console.log("User wants to save: " + amountToSave);
         saveMoney(senderID, amountToSave, messageText);
       }
+
+      return;
+    } else if (mm(messageText, "send * to *")) {
+      var splitMessageText = messageText.split("to");
+      var transactionAmount = parseInt(splitMessageText[0].replace(/[^0-9\.]/g, ''), 10).toString();
+      var recipientAccountNo = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10).toString();
+      var paymentReference = "received " + transactionAmount + " from " + users[senderID]["givenName"];
+      var serverFeedbackToUser = "Successfully sent " + transactionAmount + " to account : " + recipientAccountNo;
+      sendMoney(senderID, recipientAccountNo, transactionAmount, paymentReference, serverFeedbackToUser);
 
       return;
     }
@@ -270,7 +279,7 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
       "toAccountNumber":recipientAccountNo,
       "toSortCode":"839999",
       "paymentReference":messageText + ", via Facebook Money Sender Page",
-      "paymentAmount":transactionAmount.toString()
+      "paymentAmount":transactionAmount
   });
 
   request.post({
@@ -302,12 +311,20 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
       console.error(response);
       console.error(error);
 
+      var parsedBody = JSON.parse(body);
+
+      var errorMessage = "unknown error";
+
+      if (parsedBody.errorMessage) {
+        errorMessage = parsedBody.errorMessage;
+      }
+
       var messageData = {
         recipient: {
           id: senderId
         },
         message: {
-          text: "Transaction failed. Please contact page admin or try again later."
+          text: "Transaction failed due to error: " + errorMessage + ". Please try again later or contact page admin."
         }
       };
 
@@ -366,8 +383,6 @@ function checkBalance(recipientId, bankAccountId) {
   });
 }
 
-
-
 function callBankAPI(accountId) {
   request({
     uri: 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + accountId,
@@ -391,8 +406,6 @@ function callBankAPI(accountId) {
 }
 
 module.exports = require('./config/express')(app, config);
-
-
 
 app.listen(config.port, function () {
   console.log('Express server listening on port ' + config.port);
