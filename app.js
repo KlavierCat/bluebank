@@ -93,8 +93,8 @@ function receivedMessage(event) {
       return;
     } else if (mm(messageText, "send * to *")) {
       var splitMessageText = messageText.split("to");
-      var recipientAccountNo = parseInt(splitMessageText[0].replace(/[^0-9\.]/g, ''), 10).toString();
-      var transactionAmount = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10).toString();
+      var transactionAmount = parseInt(splitMessageText[0].replace(/[^0-9\.]/g, ''), 10).toString();
+      var recipientAccountNo = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10).toString();
       var paymentReference = "received " + transactionAmount + " from " + users[senderID]["givenName"];
       var serverFeedbackToUser = "Successfully sent " + transactionAmount + " to account : " + recipientAccountNo;
       sendMoney(senderID, recipientAccountNo, transactionAmount, paymentReference, serverFeedbackToUser);
@@ -280,12 +280,20 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
       console.error(response);
       console.error(error);
 
+      var parsedBody = JSON.parse(body);
+
+      var errorMessage = "unknown error";
+
+      if (parsedBody.errorMessage) {
+        errorMessage = parsedBody.errorMessage;
+      }
+
       var messageData = {
         recipient: {
           id: senderId
         },
         message: {
-          text: "Transaction failed. Please contact page admin or try again later."
+          text: "Transaction failed due to error: " + errorMessage + ". Please try again later or contact page admin."
         }
       };
 
