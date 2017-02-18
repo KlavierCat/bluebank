@@ -415,7 +415,7 @@ function sendImageMessage(recipientId, imagePath) {
   request.post({
     headers: {'content-type' : 'application/x-www-form-urlencoded'},
     uri:     'https://graph.facebook.com/v2.6/me/messages',
-    qs: { access_token: "contigobrillaelsol" },
+    qs: { access_token: PAGE_ACCESS_TOKEN },
     form:    messageData
   }, function(error, response, body){
     console.log(body);
