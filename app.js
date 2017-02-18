@@ -322,7 +322,7 @@ function getTransactionsHistory(customerId, accountType) {
             id: customerId
           },
           message: {
-            text: parsedBody[i]["transactionAmount"] + " " + parsedBody[i]["transactionDescription"] + " " + parsedBody[i]["transactionDateTime"]
+            text: parsedBody[i]["transactionAmount"] + "\n" + parsedBody[i]["transactionDescription"] + "\n" + parsedBody[i]["transactionDateTime"]
           }
         }
 
