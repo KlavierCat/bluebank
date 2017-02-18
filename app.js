@@ -128,6 +128,8 @@ function receivedMessage(event) {
 
       case 'saving account history':
       case 'saving account transactions':
+      case 'saving account transaction':
+      case 'saving account transaction history':
       case 'saving account transactions history':
       case 'saving account recent transactions':
       case 'saving account recent transactions history':
