@@ -406,20 +406,17 @@ function sendImageMessage(recipientId, imagePath) {
       id: recipientId
     },
     message: {
-      attachment:{type:"image", payload:{}}
-    },
-    filedata : "@" + imagePath + ";type=image/png"
+      attachment:{
+      	type:"image", 
+      	payload:{
+      		url:"https://hellopanpan.azurewebsites.net/img/qrcode83787384783793840.png"
+      	}
+      }
+    }
 
   };
 
-  request.post({
-    headers: {'content-type' : 'application/x-www-form-urlencoded'},
-    uri:     'https://graph.facebook.com/v2.6/me/messages',
-    qs: { access_token: PAGE_ACCESS_TOKEN },
-    form:    messageData
-  }, function(error, response, body){
-    console.log(body);
-  });
+  callSendAPI(messageData);
 }
 
 //TODO test if this send image message is working
