@@ -235,7 +235,7 @@ function callSendAPI(messageData) {
 function saveMoney(recipientId, amountToSave, messageText) {
   var currentAccountID = users[recipientId]["currentAccountId"];
   var savingAccountNo = users[recipientId]["savingAccountNumber"];
-  var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + currentAccountId +'/payments';
+  var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + currentAccountID +'/payments';
   var bodyStr = JSON.stringify({
       "toAccountNumber":savingAccountNo,
       "toSortCode":"839999",
@@ -243,7 +243,7 @@ function saveMoney(recipientId, amountToSave, messageText) {
       "paymentAmount":amountToSave.toString()
     });
 
-  request({
+  request.post({
     headers: {
       'Ocp-Apim-Subscription-Key': users[recipientId]['token'],
       'bearer': users[recipientId]['bearer'],
@@ -274,6 +274,7 @@ function saveMoney(recipientId, amountToSave, messageText) {
     }
   });
 }
+
 
 function checkBalance(recipientId, bankAccountId) {
   var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + bankAccountId;
