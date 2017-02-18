@@ -106,15 +106,14 @@ function receivedMessage(event) {
 		//Create the QrCOde and send to fb
 		var amountToSend = parseInt(messageText.replace(/[^0-9\.]/g, ''), 10);
 		console.log("generate qrCode: "+amountToSend);
-		/*if (isNaN(amountToSave)){
-        	console.log('user did not include a valid amount to save in message: ' + messageText);
-      	} */
-      	var sellerID = users[recipientId]["currentAccountId"];
-    	createQrCode(sellerID, amountToSend);
-        sendImageMessage(sellerID);
+		
+    	createQrCode(senderID, amountToSend);
+    	//senderID aqui
+    	sendImageMessage(senderID);
+        
         console.log("Seller generate qrCode: " + amountToSave);
 
-        //saveMoney(senderID, amountToSave, messageText);
+       
 		return;
     }
 
@@ -391,17 +390,17 @@ function callBankAPI(accountId) {
 }
 
 function createQrCode(sellerID, amountToSend) {
+  	console.log('inside createQrCode');
   	var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + sellerID +'/payments?amount='+amountToSend;
   
  	var qr_png = qr.image(queryUrl, {type: 'png' });
 	qr_png.pipe(require('fs').createWriteStream('public/img/qrcode'+sellerID+'.png'));
 	console.log('generated qrcode name:qrcode'+sellerID+'.png');
 	//var png_string = qr.imageSync(queryUrl, { type: 'png' });
-
  }
 
 
-function sendImageMessage(recipientId, sellerID) {
+function sendImageMessage(recipientId) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -410,7 +409,7 @@ function sendImageMessage(recipientId, sellerID) {
       attachment:{
       	type:"image", 
       	payload:{
-      		url:SERVER_URL+"/img/qrcode"+sellerID+".png"
+      		url:SERVER_URL+"/img/qrcode"+recipientId+".png"
       	}
       }
     }
