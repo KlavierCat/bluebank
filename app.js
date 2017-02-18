@@ -106,9 +106,9 @@ function receivedMessage(event) {
 		//Create the QrCOde and send to fb
 		var amountToSend = parseInt(messageText.replace(/[^0-9\.]/g, ''), 10);
 		console.log("generate qrCode: "+amountToSend);
-		if (isNaN(amountToSave)){
+		/*if (isNaN(amountToSave)){
         	console.log('user did not include a valid amount to save in message: ' + messageText);
-      	} 
+      	} */
       	var sellerID = users[recipientId]["currentAccountId"];
     	createQrCode(sellerID, amountToSend);
         sendImageMessage(sellerID);
