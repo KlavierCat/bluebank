@@ -91,6 +91,13 @@ function receivedMessage(event) {
       }
 
       return;
+    } else if (mm(messageText, "send * to *")) {
+      var splitMessageText = messageText.split("to");
+      var recipientAccountNo = parseInt(splitMessageText[0].replace(/[^0-9\.]/g, ''), 10);
+      var transactionAmount = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10);
+      var paymentReference = "received " + transactionAmount.toString() + " from " + users[senderID]["givenName"];
+      var serverFeedbackToUser = "Successfully sent " + transactionAmount.toString() + " to account : " + recipientAccountNo;
+      sendMoney(senderID, recipientAccountNo, transactionAmount, paymentReference, serverFeedbackToUser);
     }
 
     switch (messageText) {
@@ -335,8 +342,6 @@ function checkBalance(recipientId, bankAccountId) {
   });
 }
 
-
-
 function callBankAPI(accountId) {
   request({
     uri: 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + accountId,
@@ -360,8 +365,6 @@ function callBankAPI(accountId) {
 }
 
 module.exports = require('./config/express')(app, config);
-
-
 
 app.listen(config.port, function () {
   console.log('Express server listening on port ' + config.port);
