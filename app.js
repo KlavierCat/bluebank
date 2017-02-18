@@ -118,6 +118,8 @@ function receivedMessage(event) {
 
       case 'current account history':
       case 'current account transactions':
+      case 'current account transaction':
+      case 'current account transaction history':
       case 'current account transactions history':
       case 'current account recent transactions':
       case 'current account recent transactions history':
@@ -279,7 +281,7 @@ function callSendAPI(messageData) {
 function getTransactionsHistory(customerId, accountType) {
   var accountTypeQueryStr = accountType + "AccountId";
   var accountId = users[customerId][accountTypeQueryStr];
-  var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + accountId + '/transactions?sortOrder=-transactionDateTime&limit=20'
+  var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + accountId + '/transactions?sortOrder=-transactionDateTime&limit=5'
 
   request({
     headers: {
