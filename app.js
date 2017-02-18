@@ -80,7 +80,7 @@ function receivedMessage(event) {
 
     // user wants to save money
     if (mm(messageText, "save *")) {
-      var amountToSave = parseInt(messageText.replace(/[^0-9\.]/g, ''), 10);
+      var amountToSave = parseInt(messageText.replace(/[^0-9\.]/g, ''), 10).toString();
 
       if (isNaN(amountToSave)){
         console.log('user did not include a valid amount to save in message: ' + messageText);
@@ -93,11 +93,13 @@ function receivedMessage(event) {
       return;
     } else if (mm(messageText, "send * to *")) {
       var splitMessageText = messageText.split("to");
-      var recipientAccountNo = parseInt(splitMessageText[0].replace(/[^0-9\.]/g, ''), 10);
-      var transactionAmount = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10);
-      var paymentReference = "received " + transactionAmount.toString() + " from " + users[senderID]["givenName"];
-      var serverFeedbackToUser = "Successfully sent " + transactionAmount.toString() + " to account : " + recipientAccountNo;
+      var recipientAccountNo = parseInt(splitMessageText[0].replace(/[^0-9\.]/g, ''), 10).toString();
+      var transactionAmount = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10).toString();
+      var paymentReference = "received " + transactionAmount + " from " + users[senderID]["givenName"];
+      var serverFeedbackToUser = "Successfully sent " + transactionAmount + " to account : " + recipientAccountNo;
       sendMoney(senderID, recipientAccountNo, transactionAmount, paymentReference, serverFeedbackToUser);
+
+      return;
     }
 
     switch (messageText) {
@@ -246,7 +248,7 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
       "toAccountNumber":recipientAccountNo,
       "toSortCode":"839999",
       "paymentReference":messageText + ", via Facebook Money Sender Page",
-      "paymentAmount":transactionAmount.toString()
+      "paymentAmount":transactionAmount
   });
 
   request.post({
