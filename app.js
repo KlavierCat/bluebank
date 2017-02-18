@@ -102,7 +102,7 @@ function receivedMessage(event) {
       sendMoney(senderID, recipientAccountNo, transactionAmount, paymentReference, serverFeedbackToUser);
 
       return;
-    }else if (mm(messageText, "receive*")){
+    } else if (mm(messageText, "receive *")){
 		//Create the QrCOde and send to fb
 		var amountToSend = parseInt(messageText.replace(/[^0-9\.]/g, ''), 10);
 		if (isNaN(amountToSave)){
