@@ -1,5 +1,6 @@
 var PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 var MESSENGER_VALIDATION_TOKEN = process.env.MESSENGER_VALIDATION_TOKEN;
+var SERVER_URL = 'https://hellopanpan.azurewebsites.net';
 
 var express = require('express'),
     config = require('./config/config'),
@@ -10,6 +11,7 @@ var express = require('express'),
 
 var app = express();
 app.use(bodyParser.json());
+var qr = require('qr-image');
 
 app.get('/webhook', function(req, res) {
   if (req.query['hub.mode'] === 'subscribe' &&
@@ -100,6 +102,19 @@ function receivedMessage(event) {
       sendMoney(senderID, recipientAccountNo, transactionAmount, paymentReference, serverFeedbackToUser);
 
       return;
+    }else if (mm(messageText, "receive*")){
+		//Create the QrCOde and send to fb
+		var amountToSend = parseInt(messageText.replace(/[^0-9\.]/g, ''), 10);
+		if (isNaN(amountToSave)){
+        	console.log('user did not include a valid amount to save in message: ' + messageText);
+      	} 
+      	var sellerID = users[recipientId]["currentAccountId"];
+    	createQrCode(sellerID, amountToSend);
+        sendImageMessage(sellerID);
+        console.log("Seller generate qrCode: " + amountToSave);
+
+        //saveMoney(senderID, amountToSave, messageText);
+		return;
     }
 
     switch (messageText) {
@@ -372,6 +387,38 @@ function callBankAPI(accountId) {
       console.error(error);
     }
   });
+}
+
+function createQrCode(sellerID, amountToSend) {
+  	var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + sellerID +'/payments?amount='+amountToSend;
+  
+ 	var qr_png = qr.image(queryUrl, {type: 'png' });
+	qr_png.pipe(require('fs').createWriteStream('public/img/qrcode'+sellerID+'.png'));
+	console.log('generated qrcode name:qrcode'+sellerID+'.png');
+	//var png_string = qr.imageSync(queryUrl, { type: 'png' });
+
+ }
+
+ /*
+ * Send an image using the Send API.
+ *
+ */
+function sendImageMessage(recipientId, sellerID) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "image",
+        payload: {
+          url: SERVER_URL + "/img/qrcode"+sellerID+".png"
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
 }
 
 module.exports = require('./config/express')(app, config);
