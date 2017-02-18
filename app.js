@@ -106,14 +106,14 @@ function receivedMessage(event) {
 		//Create the QrCOde and send to fb
 		var amountToSend = parseInt(messageText.replace(/[^0-9\.]/g, ''), 10);
 		console.log("generate qrCode: "+amountToSend);
-		
+
     	createQrCode(senderID, amountToSend);
     	//senderID aqui
     	sendImageMessage(senderID);
-        
+
         console.log("Seller generate qrCode: " + amountToSave);
 
-       
+
 		return;
     }
 
@@ -233,37 +233,6 @@ function sendTextMessage(recipientId, messageText) {
 
   callSendAPI(messageData);
 }
-
-
-
-function sendImageMessage(recipientId, imagePath) {
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment:{type:"image", payload:{}}
-    },
-    filedata : "@" + imagePath + ";type=image/png"
-
-  };
-
-  request.post({
-    headers: {'content-type' : 'application/x-www-form-urlencoded'},
-    uri:     'https://graph.facebook.com/v2.6/me/messages',
-    qs: { access_token: "contigobrillaelsol" },
-    form:    messageData
-  }, function(error, response, body){
-    console.log(body);
-  });
-}
-//TODO test if this send image message is working
-//sendImageMessage("1217825631647606", "./png_sample.png");
-app.get('/imageMessageToMauricio', function(req, res) {
-  sendImageMessage("1217825631647606", "./png_sample.png");
-  res.status(200).send({"foo" : "bar"});
-});
-
 
 function callSendAPI(messageData) {
   request({
@@ -424,7 +393,7 @@ function createQrCode(sellerID, amountToSend) {
   	console.log('inside createQrCode');
   	//var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + sellerID +'/payments?amount='+amountToSend;
   	var queryUrl = "{url:'https://bluebank.azure-api.net/api/v0.6.3/accounts/', seller:"+sellerID+", amount:"+amountToSend+"}";
-  
+
  	var qr_png = qr.image(queryUrl, {type: 'png' });
 	qr_png.pipe(require('fs').createWriteStream('public/img/qrcode'+sellerID+'.png'));
 	console.log('generated qrcode name:qrcode'+sellerID+'.png');
@@ -437,7 +406,7 @@ function sendImageMessage(recipientId) {
     },
     message: {
       attachment:{
-      	type:"image", 
+      	type:"image",
       	payload:{
       		url:SERVER_URL+"/img/qrcode"+recipientId+".png"
       	}
