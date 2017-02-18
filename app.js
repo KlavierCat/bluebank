@@ -1,5 +1,6 @@
 var PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 var MESSENGER_VALIDATION_TOKEN = process.env.MESSENGER_VALIDATION_TOKEN;
+var SERVER_URL = 'https://hellopanpan.azurewebsites.net';
 
 var express = require('express'),
     config = require('./config/config'),
@@ -10,6 +11,7 @@ var express = require('express'),
 
 var app = express();
 app.use(bodyParser.json());
+var qr = require('qr-image');
 
 app.get('/webhook', function(req, res) {
   if (req.query['hub.mode'] === 'subscribe' &&
@@ -109,6 +111,19 @@ function receivedMessage(event) {
       sendMoney(senderID, recipientAccountNo, transactionAmount, paymentReference, serverFeedbackToUser);
 
       return;
+    } else if (mm(messageText, "qrcode *")){
+		//Create the QrCOde and send to fb
+		var amountToSend = parseInt(messageText.replace(/[^0-9\.]/g, ''), 10);
+		console.log("generate qrCode: "+amountToSend);
+
+    	createQrCode(senderID, amountToSend);
+    	//senderID aqui
+    	sendImageMessage(senderID);
+
+        console.log("Seller generate qrCode: " + amountToSave);
+
+
+		return;
     }
 
     switch (messageText) {
@@ -483,6 +498,42 @@ function callBankAPI(accountId) {
     }
   });
 }
+
+function createQrCode(sellerID, amountToSend) {
+  	console.log('inside createQrCode');
+  	//var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + sellerID +'/payments?amount='+amountToSend;
+  	var queryUrl = "{url:'https://bluebank.azure-api.net/api/v0.6.3/accounts/', seller:"+sellerID+", amount:"+amountToSend+"}";
+
+ 	var qr_png = qr.image(queryUrl, {type: 'png' });
+	qr_png.pipe(require('fs').createWriteStream('public/img/qrcode'+sellerID+'.png'));
+	console.log('generated qrcode name:qrcode'+sellerID+'.png');
+ }
+
+function sendImageMessage(recipientId) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment:{
+      	type:"image",
+      	payload:{
+      		url:SERVER_URL+"/img/qrcode"+recipientId+".png"
+      	}
+      }
+    }
+
+  };
+
+  callSendAPI(messageData);
+}
+
+//TODO test if this send image message is working
+//sendImageMessage("1217825631647606", "./png_sample.png");
+app.get('/imageMessageToMauricio', function(req, res) {
+  sendImageMessage("1217825631647606", "./qrcode83787384783793840.png");
+  res.status(200).send({"foo" : "bar"});
+});
 
 module.exports = require('./config/express')(app, config);
 
