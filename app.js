@@ -85,15 +85,24 @@ function receivedMessage(event) {
       if (isNaN(amountToSave)){
         console.log('user did not include a valid amount to save in message: ' + messageText);
         // send message scolding them
-      } else {
-        console.log("User wants to save: " + amountToSave);
-        saveMoney(senderID, amountToSave, messageText);
+        return;
       }
 
+      console.log("User wants to save: " + amountToSave);
+      saveMoney(senderID, amountToSave, messageText);
+
       return;
+
     } else if (mm(messageText, "send * to *")) {
       var splitMessageText = messageText.split("to");
       var transactionAmount = parseInt(splitMessageText[0].replace(/[^0-9\.]/g, ''), 10).toString();
+
+      if (isNaN(transactionAmount)){
+        console.log('user did not include a valid amount to save in message: ' + messageText);
+        // send message scolding them
+        return;
+      }
+
       var recipientAccountNo = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10).toString();
       var paymentReference = "received " + transactionAmount + " from " + users[senderID]["givenName"];
       var serverFeedbackToUser = "Successfully sent " + transactionAmount + " to account : " + recipientAccountNo;
@@ -107,12 +116,28 @@ function receivedMessage(event) {
         sendGenericMessage(senderID);
         break;
 
+      case 'current account history':
+      case 'current account transactions':
+      case 'current account transactions history':
+      case 'current account recent transactions':
+      case 'current account recent transactions history':
+        getTransactionsHistory(senderID, "current");
+        break;
+
+      case 'saving account history':
+      case 'saving account transactions':
+      case 'saving account transactions history':
+      case 'saving account recent transactions':
+      case 'saving account recent transactions history':
+        getTransactionsHistory(senderID, "saving");
+        break;
+
       case 'current account balance':
       case 'current account':
       case 'check current account balance':
         console.log('user checking current account ' + users[senderID]["currentAccountId"]);
         var currentAccountID = users[senderID]["currentAccountId"];
-        checkBalance(senderID, currentAccountID);
+        checkBalance(senderID, currentAccountID, "current");
         break;
 
       case 'saving account balance':
@@ -120,8 +145,18 @@ function receivedMessage(event) {
       case 'check saving account balance':
         console.log('user checking saving account ' + users[senderID]["savingAccountId"]);
         var savingAccountID = users[senderID]["savingAccountId"];
-        checkBalance(senderID, savingAccountID);
+        checkBalance(senderID, savingAccountID, "saving");
         break;
+
+      case 'account balance':
+      case 'accounts balance':
+      case 'balance':
+      case 'check account balance':
+      case 'check accounts balance':
+        var currentAccountID = users[senderID]["currentAccountId"];
+        checkBalance(senderID, currentAccountID, "current");
+        var savingAccountID = users[senderID]["savingAccountId"];
+        checkBalance(senderID, savingAccountID, "saving");
 
       default:
         sendTextMessage(senderID, messageText);
@@ -241,6 +276,76 @@ function callSendAPI(messageData) {
   });
 }
 
+function getTransactionsHistory(customerId, accountType) {
+  var accountTypeQueryStr = accountType + "AccountId";
+  var accountId = users[customerId][accountTypeQueryStr];
+  var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + accountId + '/transactions?sortOrder=-transactionDateTime&limit=20'
+
+  request({
+    headers: {
+      'Ocp-Apim-Subscription-Key': users[customerId]['token'],
+      'bearer': users[customerId]['bearer']
+    },
+    uri: queryUrl,
+    method: 'GET'
+
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      console.log("Successfully inquire recenet transactions for account %s for user %s",
+        accountId, customerId);
+
+      console.log(body);
+
+      var parsedBody = JSON.parse(body);
+
+      var transactionHistoryMessageTest = "You don't have any transactions on your" + accountType + " account yet.";
+
+      if (parsedBody.length > 0) {
+         transactionHistoryMessageTest = "Your " + accountType + " account recent transaction history is:";
+      }
+
+      var transactionsHistoryMessage = {
+        recipient: {
+          id: customerId
+        },
+        message: {
+          text: transactionHistoryMessageTest
+        }
+      }
+
+      callSendAPI(transactionsHistoryMessage);
+
+      for (var i = 0; i < parsedBody.length; i++) {
+        var messageData = {
+          recipient: {
+            id: customerId
+          },
+          message: {
+            text: body.transactionAmount + " " + body.transactionDescription + " " + body.transactionDateTime
+          }
+        }
+
+        callSendAPI(messageData);
+      }
+    } else {
+      console.error("Unable to inquire transaction history");
+      console.error(response);
+      console.error(error);
+
+      var transactionsHistoryMessage = {
+        recipient: {
+          id: customerId
+        },
+        message: {
+          text: "Failed to inquire transaction history on your " + accountType + " account. Try again later or contact the page admin."
+        }
+      }
+
+      callSendAPI(transactionsHistoryMessage);
+    }
+  });
+}
+
 function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText, serverFeedbackToUser) {
   var senderAccountId = users[senderId]["currentAccountId"];
   var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + senderAccountId +'/payments';
@@ -309,7 +414,7 @@ function saveMoney(recipientId, amountToSave, messageText) {
 }
 
 
-function checkBalance(recipientId, bankAccountId) {
+function checkBalance(recipientId, bankAccountId, accountType) {
   var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + bankAccountId;
 
   request({
@@ -332,7 +437,7 @@ function checkBalance(recipientId, bankAccountId) {
       var accountBalance = parsedBody.accountBalance;
       var accountCurrency = parsedBody.accountCurrency;
 
-      var accountBalanceMessage = "Account balance: " + accountBalance + " " + accountCurrency;
+      var accountBalanceMessage = "Your " + accountType + " account balance is: " + accountBalance + " " + accountCurrency;
 
       var messageData = {
         recipient: {
