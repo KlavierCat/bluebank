@@ -316,6 +316,11 @@ function getTransactionsHistory(customerId, accountType) {
       callSendAPI(transactionsHistoryMessage);
 
       for (var i = 0; i < parsedBody.length; i++) {
+        console.log("transactionAmount");
+        console.log(parsedBody.transactionAmount);
+        console.log("transactionDescription");
+        console.log(parsedBody.transactionDescription);
+
         var messageData = {
           recipient: {
             id: customerId
