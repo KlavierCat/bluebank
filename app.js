@@ -353,7 +353,7 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
   var bodyStr = JSON.stringify({
       "toAccountNumber":recipientAccountNo,
       "toSortCode":"839999",
-      "paymentReference":messageText + ", via Facebook Money Sender Page",
+      "paymentReference":messageText + ", via Facebook MoneyTransfer Page",
       "paymentAmount":transactionAmount
   });
 
