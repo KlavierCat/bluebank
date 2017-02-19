@@ -182,9 +182,8 @@ function receivedMessage(event) {
     }
   } else if (messageAttachments) {
 
-    sendTextMessage(senderID, "Message with attachment received");
-
     if (mm(messageAttachments[0].url, "https://l.facebook.com/l.php?*www.bing.com%2Fmaps*")) {
+      sendTextMessage(senderID, "querying nearest ATMs");
       var latitude = messageAttachments[0].payload.coordinates.lat.toString();
       var longitude = messageAttachments[0].payload.coordinates.long.toString();
       console.log('User ' + senderID + "looking for ATM near: " + latitude + ", " + longitude);
@@ -324,32 +323,14 @@ function getNearAtm(recipientId, latitude, longitude) {
       var parsedBody = JSON.parse(body);
 
       if (parsedBody.length == 0) {
-        var messageData = {
-          recipient: {
-            id: recipientId
-          },
-          message: {
-            text: "Sorry, no ATM info nearby."
-          }
-        };
-
-        callSendAPI(messageData);
+        sendTextMessage(recipientId, "Sorry, no ATM info nearby.");
         return;
       }
 
       for (var i = 0; i < parsedBody.length; i++) {
         var atm = parsedBody[i];
-
-        var messageData = {
-          recipient: {
-            id: recipientId
-          },
-          message: {
-            text: atm.brand + " ATM: " + atm.atmName + "\n" + "Address: " + atm.streetAddress + ", " + atm.city + ", " + atm.postCode
-          }
-        }
-
-        callSendAPI(messageData);
+        var messageText = atm.brand + " ATM: " + atm.atmName + "\n" + "Address: " + atm.streetAddress + ", " + atm.city + ", " + atm.postCode;
+        sendTextMessage(recipientId, messageText);
       }
 
     } else {
@@ -357,17 +338,7 @@ function getNearAtm(recipientId, latitude, longitude) {
       console.error(response);
       console.error(error);
 
-      var messageData = {
-        recipient: {
-          id: recipientId
-        },
-        message: {
-          text: "Sorry, failed to query ATM info nearby."
-        }
-      };
-
-      callSendAPI(messageData);
-
+      sendTextMessage(recipientId, "Sorry, failed to query nearby ATMs.");
     }
   });
 }
