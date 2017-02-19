@@ -219,7 +219,15 @@ function receivedPostback(event) {
 
   // When a postback is called, we'll send a message back to the sender to
   // let them know it was successful
-  sendTextMessage(senderID, "Thanks for your interests, we'll contact you shortly.");
+  if (payload == "cancel"){
+    sendTextMessage(senderID, "Transaction cancelled. Your account has NOT been deducted.");
+  } else if (payload == "request callback") {
+    sendTextMessage(senderID, "Thanks for your interests, we'll contact you shortly.");
+  } else {
+    var args = JSON.parse(payload);
+    sendMoneyRequest.apply(this, args);
+  }
+
 }
 
 /*
@@ -262,7 +270,7 @@ function sendGenericMessage(recipientId, messageText) {
             }, {
               type: "postback",
               title: "Request a callback",
-              payload: "Payload for second bubble",
+              payload: "request callback",
             }]
           }]
         }
@@ -396,8 +404,31 @@ function getTransactionsHistory(customerId, accountType) {
 }
 
 function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText, serverFeedbackToUser) {
-  var senderAccountId = users[senderId]["currentAccountId"];
-  var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + senderAccountId +'/payments';
+  var recipientId = "";
+  var recipientAccountType = "";
+
+  for (var facebookKey in users) {
+    if (users.hasOwnProperty(facebookKey)) {
+      for (var accountProp in users[facebookKey]) {
+        if (users[facebookKey][accountProp] == recipientAccountNo) {
+          recipientId = facebookKey;
+          recipientAccountType = accountProp.split("Account")[0];
+        }
+      }
+    }
+  }
+
+  if (recipientId == senderId) {
+    confirmSavingMoney(senderId, recipientAccountNo, transactionAmount, messageText, serverFeedbackToUser);
+  } else if (recipientId != "") {
+    confirmSendingMoneyWithRecipientFacebook(senderId, recipientAccountNo, transactionAmount, messageText, serverFeedbackToUser, recipientId, recipientAccountType);
+  } else {
+    confirmSendingMoney(senderId, recipientAccountNo, transactionAmount, messageText, serverFeedbackToUser);
+  }
+}
+
+function sendMoneyRequest(senderId, recipientAccountNo, transactionAmount, messageText, serverFeedbackToUser, recipientId, recipientAccountType) {
+  var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/accounts/' + users[senderId]["currentAccountId"] +'/payments';
   var bodyStr = JSON.stringify({
       "toAccountNumber":recipientAccountNo,
       "toSortCode":"839999",
@@ -420,21 +451,6 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
       console.log("Successfully send: " + transactionAmount);
 
       sendTextMessage(senderId, serverFeedbackToUser);
-
-      var recipientId = "";
-
-      var recipientAccountType = "";
-
-      for (var facebookKey in users) {
-        if (users.hasOwnProperty(facebookKey)) {
-          for (var accountProp in users[facebookKey]) {
-            if (users[facebookKey][accountProp] == recipientAccountNo) {
-              recipientId = facebookKey;
-              recipientAccountType = accountProp.split("Account")[0];
-            }
-          }
-        }
-      }
 
       if (recipientId != "") {
         setTimeout(function () {
@@ -465,6 +481,105 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
       sendTextMessage(senderId, failedMessageText);
     }
   });
+}
+
+function confirmSendingMoney(senderId, recipientAccountNo, transactionAmount, messageText, serverFeedbackToUser) {
+    var messageData = {
+    recipient: {
+      id: senderId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: "Send " + transactionAmount + " to account: " + recipientAccountNo,
+            subtitle: "",
+            item_url: "",
+            image_url: "",
+            buttons: [{
+              type: "postback",
+              title: "Confirm",
+              payload: JSON.stringify([senderId, recipientAccountNo, transactionAmount, messageText, serverFeedbackToUser, "", ""])
+            }, {
+              type: "postback",
+              title: "Cancel",
+              payload: "cancel",
+            }]
+          }]
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+function confirmSavingMoney(senderId, recipientAccountNo, transactionAmount, messageText, serverFeedbackToUser) {
+    var messageData = {
+    recipient: {
+      id: senderId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: "Save " + transactionAmount + " to saving account.",
+            subtitle: "",
+            item_url: "",
+            image_url: "",
+            buttons: [{
+              type: "postback",
+              title: "Confirm",
+              payload: JSON.stringify([senderId, recipientAccountNo, transactionAmount, messageText, serverFeedbackToUser, senderId, "saving"])
+            }, {
+              type: "postback",
+              title: "Cancel",
+              payload: "cancel",
+            }]
+          }]
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+function confirmSendingMoneyWithRecipientFacebook(senderId, recipientAccountNo, transactionAmount, messageText, serverFeedbackToUser, recipientId, recipientAccountType) {
+    var messageData = {
+    recipient: {
+      id: senderId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: "Send " + transactionAmount + " to " + users[recipientId]["givenName"] + " " + users[recipientId]["familyName"],
+            subtitle: "",
+            item_url: "https://www.facebook.com" + users[recipientId]["facebookHandler"],
+            image_url: "",
+            buttons: [{
+              type: "postback",
+              title: "Confirm",
+              payload: JSON.stringify([senderId, recipientAccountNo, transactionAmount, messageText, serverFeedbackToUser, recipientId, recipientAccountType])
+            }, {
+              type: "postback",
+              title: "Cancel",
+              payload: "cancel",
+            }]
+          }]
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
 }
 
 function saveMoney(recipientId, amountToSave, messageText) {
