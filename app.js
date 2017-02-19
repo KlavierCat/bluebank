@@ -243,7 +243,7 @@ function sendGenericMessage(recipientId, messageText) {
             image_url: "https://pbs.twimg.com/profile_images/481434724317945859/bspl1Agb_400x400.jpeg",
             buttons: [{
               type: "web_url",
-              url: "www.ulsterbank.ie/Ireland",
+              url: "http://digital.ulsterbank.ie/",
               title: "Open Web URL"
             }, {
               type: "phone_number",
