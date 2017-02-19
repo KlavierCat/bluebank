@@ -106,8 +106,8 @@ function receivedMessage(event) {
       }
 
       var recipientAccountNo = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10).toString();
-      var paymentReference = "received " + transactionAmount + " from " + users[senderID]["givenName"] + " " + users[senderID]["familyName"];
-      var serverFeedbackToUser = "Your request to send " + transactionAmount + " to account : " + recipientAccountNo + " has been received.";
+      var paymentReference = "received " + transactionAmount + " GBP from " + users[senderID]["givenName"] + " " + users[senderID]["familyName"];
+      var serverFeedbackToUser = "Your request to send " + transactionAmount + " GBP to account : " + recipientAccountNo + " has been received.";
       sendMoney(senderID, recipientAccountNo, transactionAmount, paymentReference, serverFeedbackToUser);
 
       return;
@@ -494,7 +494,7 @@ function confirmSendingMoney(senderId, recipientAccountNo, transactionAmount, me
         payload: {
           template_type: "generic",
           elements: [{
-            title: "Send " + transactionAmount + " to account: " + recipientAccountNo,
+            title: "Send " + transactionAmount + " GBP to account: " + recipientAccountNo,
             subtitle: "",
             item_url: "",
             image_url: "",
@@ -527,7 +527,7 @@ function confirmSavingMoney(senderId, recipientAccountNo, transactionAmount, mes
         payload: {
           template_type: "generic",
           elements: [{
-            title: "Save " + transactionAmount + " to saving account.",
+            title: "Save " + transactionAmount + " GBP to saving account.",
             subtitle: "",
             item_url: "",
             image_url: "",
@@ -560,7 +560,7 @@ function confirmSendingMoneyWithRecipientFacebook(senderId, recipientAccountNo, 
         payload: {
           template_type: "generic",
           elements: [{
-            title: "Send " + transactionAmount + " to " + users[recipientId]["givenName"] + " " + users[recipientId]["familyName"],
+            title: "Send " + transactionAmount + " GBP to " + users[recipientId]["givenName"] + " " + users[recipientId]["familyName"],
             subtitle: "",
             item_url: "https://www.facebook.com" + users[recipientId]["facebookHandler"],
             image_url: "",
