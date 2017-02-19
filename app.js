@@ -562,7 +562,7 @@ function confirmSendingMoneyWithRecipientFacebook(senderId, recipientAccountNo, 
           elements: [{
             title: "Send " + transactionAmount + " GBP to " + users[recipientId]["givenName"] + " " + users[recipientId]["familyName"],
             subtitle: "",
-            item_url: "https://www.facebook.com" + users[recipientId]["facebookHandler"],
+            item_url: "https://www.facebook.com/" + users[recipientId]["facebookHandler"],
             image_url: "",
             buttons: [{
               type: "postback",
