@@ -107,6 +107,8 @@ function receivedMessage(event) {
 
       var recipientAccountNo = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10);
 
+      console.log("splitMessageText[1]: " + splitMessageText[1]);
+
       if (isNaN(recipientAccountNo)) {
         switch(splitMessageText[1]) {
           case ' Panpan Lin':
