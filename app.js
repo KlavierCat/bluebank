@@ -416,6 +416,28 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
       console.log("Successfully send: " + transactionAmount);
 
       sendTextMessage(senderId, serverFeedbackToUser);
+
+      var recipientId = "";
+
+      var recipientAccountType = "";
+
+      for (var facebookKey in users) {
+        if (users.hasOwnProperty(facebookKey)) {
+          for (var accountProp in users[facebookKey]) {
+            if (users[facebookKey][accountProp] == recipientAccountNo) {
+              recipientId = facebookKey;
+              recipientAccountType = accountProp.split("Account")[0];
+            }
+          }
+        }
+      }
+
+      if (recipientId != "") {
+        setTimeout(function () {
+          sendTextMessage(recipientId, "You have received " + transactionAmount + " in your " + recipientAccountType + " account "  + " from " + users[senderId]["givenName"]);
+        }, 20000)
+      }
+
     } else {
       console.error("Unable to carry out transaction");
       console.error(response);
