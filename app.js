@@ -610,7 +610,7 @@ function confirmSendingMoneyWithRecipientFacebook(senderId, recipientAccountNo, 
             title: "Send " + transactionAmount + " GBP to " + users[recipientId]["givenName"] + " " + users[recipientId]["familyName"],
             subtitle: "",
             item_url: "https://www.facebook.com/" + users[recipientId]["facebookHandler"],
-            image_url: "",
+            image_url: "https://panpan-lin.github.io/roots/img/team/" + recipientId + ".jpg",
             buttons: [{
               type: "postback",
               title: "Confirm",
