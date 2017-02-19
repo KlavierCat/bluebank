@@ -434,7 +434,7 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
 
       if (recipientId != "") {
         setTimeout(function () {
-          sendTextMessage(recipientId, "You have received " + transactionAmount + " in your " + recipientAccountType + " account "  + " from " + users[senderId]["givenName"]);
+          sendTextMessage(recipientId, "You have received " + transactionAmount + " GBP in your " + recipientAccountType + " account "  + " from " + users[senderId]["givenName"]);
         }, 20000)
       }
 
