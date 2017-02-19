@@ -97,16 +97,17 @@ function receivedMessage(event) {
 
     } else if (mm(messageText, "send * to *")) {
       var splitMessageText = messageText.split("to");
-      var transactionAmount = parseInt(splitMessageText[0].replace(/[^0-9\.]/g, ''), 10).toString();
+      var transactionAmount = parseInt(splitMessageText[0].replace(/[^0-9\.]/g, ''), 10);
 
       if (isNaN(transactionAmount)){
         console.log('user did not include a valid amount to save in message: ' + messageText);
         sendTextMessage(senderID, "Bad request. Format for sending money is: \n send amount-of-money to bank-account-number");
         return;
+      } else {
+        transactionAmount = transactionAmount.toString();
       }
 
-
-      var recipientAccountNo = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10).toString();
+      var recipientAccountNo = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10);
 
       if (isNaN(recipientAccountNo)) {
         for (var facebookKey in users) {
@@ -122,6 +123,8 @@ function receivedMessage(event) {
         sendTextMessage(senderID, "Bad request. Format for sending money is: \n send amount-of-money to bank-account-number");
         return;
       }
+
+      recipientAccountNo = recipientAccountNo.toString();
 
       var paymentReference = "received " + transactionAmount + " GBP from " + users[senderID]["givenName"] + " " + users[senderID]["familyName"];
       var serverFeedbackToUser = "Your request to send " + transactionAmount + " GBP to account : " + recipientAccountNo + " has been received.";
