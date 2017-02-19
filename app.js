@@ -101,11 +101,28 @@ function receivedMessage(event) {
 
       if (isNaN(transactionAmount)){
         console.log('user did not include a valid amount to save in message: ' + messageText);
-        // send message scolding them
+        sendTextMessage(senderID, "Bad request. Format for sending money is: \n send amount-of-money to bank-account-number");
         return;
       }
 
+
       var recipientAccountNo = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10).toString();
+
+      if (isNaN(recipientAccountNo)) {
+        for (var facebookKey in users) {
+          if (users.hasOwnProperty(facebookKey)) {
+            for (var accountProp in users[facebookKey]) {
+              if (users[facebookKey][accountProp].slice(0,5) == recipientAccountNo.slice(0,5)) {
+                recipientAccountNo = users[facebookKey]["currentAccountNumber"];
+              }
+            }
+          }
+        }
+      } else {
+        sendTextMessage(senderID, "Bad request. Format for sending money is: \n send amount-of-money to bank-account-number");
+        return;
+      }
+
       var paymentReference = "received " + transactionAmount + " GBP from " + users[senderID]["givenName"] + " " + users[senderID]["familyName"];
       var serverFeedbackToUser = "Your request to send " + transactionAmount + " GBP to account : " + recipientAccountNo + " has been received.";
       sendMoney(senderID, recipientAccountNo, transactionAmount, paymentReference, serverFeedbackToUser);
