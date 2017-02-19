@@ -128,6 +128,10 @@ function receivedMessage(event) {
 
     switch (messageText) {
       case 'generic':
+      case 'info':
+      case 'information':
+      case 'about ulster bank':
+      case 'about':
         sendGenericMessage(senderID);
         break;
 
@@ -242,9 +246,9 @@ function sendGenericMessage(recipientId, messageText) {
               url: "www.ulsterbank.ie/Ireland",
               title: "Open Web URL"
             }, {
-              type: "postback",
-              title: "Request a callback",
-              payload: "Payload for first bubble",
+              type: "phone_number",
+              title: "Call Representative",
+              payload: "+353899558590",
             }],
           }, {
             title: "Mortgages",
