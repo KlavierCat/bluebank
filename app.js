@@ -239,7 +239,7 @@ function sendGenericMessage(recipientId, messageText) {
           elements: [{
             title: "Ulster Bank",
             subtitle: "",
-            item_url: "www.ulsterbank.ie/Ireland",
+            item_url: "http://digital.ulsterbank.ie/",
             image_url: "https://pbs.twimg.com/profile_images/481434724317945859/bspl1Agb_400x400.jpeg",
             buttons: [{
               type: "web_url",
