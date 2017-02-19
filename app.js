@@ -431,7 +431,7 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
 
       var failedMessageText = "Transaction failed due to error: " + errorMessage + ". Please try again later or contact page admin.";
 
-      sendTextMessage(customerId, failedMessageText);
+      sendTextMessage(senderId, failedMessageText);
     }
   });
 }
