@@ -18,7 +18,7 @@ var users = {
     'bearer':'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXN0b21lcklkIjoiNThhMTczMTIwNmQwZjllNzE4OWQxZGIyIiwicm9sZSI6InVzZXIiLCJwcmltYXJ5U3Vic2NyaWJlcktleSI6ImRlYmUyMjU4YTJlYjQwOWM4M2QxYTBjYTZhOWI3ZGE2IiwiaWF0IjoxNDg3MTkxNDc2fQ.903OULlUd4JAgDz34qDXkmtDYc95Pi4054d1Qa3od3s',
     'customerId':'58a1731206d0f9e7189d1db2',
     'currentAccountId':'58a1731206d0f9e7189d1db3',
-    'currentAccountNo':'10000374'
+    'currentAccountNo':'10000374',
     'savingAccountId':'58a1731206d0f9e7189d1db4',
     'savingAccountNumber':'50000375',
     'facebookHandler':'mauriciodeoliveirareis'
