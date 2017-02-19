@@ -184,7 +184,7 @@ function receivedMessage(event) {
 
     sendTextMessage(senderID, "Message with attachment received");
 
-    if (mm(messageAttachments[0].title, "*'s Location")) {
+    if (mm(messageAttachments[0].title, "*'s location")) {
       var latitude = messageAttachments[0].payload.coordinates.lat.toString();
       var longitude = messageAttachments[0].payload.coordinates.long.toString();
       console.log('User ' + senderID + "looking for ATM near: " + latitude + ", " + longitude);
