@@ -113,15 +113,21 @@ function receivedMessage(event) {
         switch(splitMessageText[1]) {
           case ' Panpan Lin':
             recipientAccountNo = 10000388;
+            break;
           case ' Mauricio Reis':
             recipientAccountNo = 10000374;
+            break;
           case ' Julia Vicente':
             recipientAccountNo = 10000389;
+            break;
           case ' Jeisse Rocha':
             recipientAccountNo = 10000375;
+            break;
           case ' Ying Feng':
             recipientAccountNo = 10000390;
+            break;
         }
+        console.log("recipientAccountNo: " + recipientAccountNo.toString());
       } else {
         sendMoney(senderID, "Can't find registered user with this name among your friends. You can use the receipient's bank account number instead of their name");
       }
