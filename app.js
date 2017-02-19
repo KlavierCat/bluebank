@@ -113,6 +113,8 @@ function receivedMessage(event) {
         for (var facebookKey in users) {
           if (users.hasOwnProperty(facebookKey)) {
             for (var accountProp in users[facebookKey]) {
+              console.log("line 116: ")
+              console.log(users[facebookKey][accoutProp]);
               if (users[facebookKey][accountProp].slice(0,4) == splitMessageText[1].slice(1,5)) {
                 recipientAccountNo = users[facebookKey]["currentAccountNumber"];
               }
@@ -120,7 +122,7 @@ function receivedMessage(event) {
           }
         }
         if (isNaN(recipientAccountNo)) {
-          sendTextMessage(senderID, "Bad request. Format for sending money is: \nsend amount-of-money to bank-account-number");
+          sendTextMessage(senderID, "Can't find an account match with this user. Please try again by specifying receiver's bank account.");
         }
       }
 
