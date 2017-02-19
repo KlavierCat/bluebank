@@ -106,8 +106,8 @@ function receivedMessage(event) {
       }
 
       var recipientAccountNo = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10).toString();
-      var paymentReference = "received " + transactionAmount + " from " + users[senderID]["givenName"];
-      var serverFeedbackToUser = "Successfully sent " + transactionAmount + " to account : " + recipientAccountNo;
+      var paymentReference = "received " + transactionAmount + " from " + users[senderID]["givenName"] + " " + users[senderID]["familyName"];
+      var serverFeedbackToUser = "Your request to send " + transactionAmount + " to account : " + recipientAccountNo + " has been received.";
       sendMoney(senderID, recipientAccountNo, transactionAmount, paymentReference, serverFeedbackToUser);
 
       return;
@@ -438,7 +438,12 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
 
       if (recipientId != "") {
         setTimeout(function () {
-          sendTextMessage(recipientId, "You have received " + transactionAmount + " GBP in your " + recipientAccountType + " account "  + " from " + users[senderId]["givenName"]);
+          if (recipientId != senderId) {
+            sendTextMessage(recipientId, "You have received " + transactionAmount + " GBP in your " + recipientAccountType + " account "  + " from " + users[senderId]["givenName"] + " " + users[senderId]['familyName'] + "\n https://www.facebook.com/" + users[senderId]["facebookHandler"]);
+            sendTextMessage(senderId, users[senderId]["givenName"] + " " + users[senderId]['familyName'] + "\n https://www.facebook.com/" + users[senderId]["facebookHandler"] + " has received your fund.");
+          } else {
+            sendTextMessage(recipientId, "Your request to save " + transactionAmount + " GBP into your saving account has been processed.");
+          }
         }, 20000)
       }
 
@@ -464,7 +469,7 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
 
 function saveMoney(recipientId, amountToSave, messageText) {
   var savingAccountNo = users[recipientId]["savingAccountNumber"];
-  var serverFeedbackToUser = "Successfully saved " + amountToSave + " GBP to saving account.";
+  var serverFeedbackToUser = "Your request to save " + amountToSave + " GBP into your saving account has been received.";
   sendMoney(recipientId, savingAccountNo, amountToSave, messageText, serverFeedbackToUser);
 }
 
