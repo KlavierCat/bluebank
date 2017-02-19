@@ -181,7 +181,15 @@ function receivedMessage(event) {
         sendTextMessage(senderID, messageText);
     }
   } else if (messageAttachments) {
+
     sendTextMessage(senderID, "Message with attachment received");
+
+    if (mm(messageAttachments[0].title, "*'s Location")) {
+      var latitude = messageAttachments[0].payload.coordinates.lat.toString();
+      var longitude = messageAttachments[0].payload.coordinates.long.toString();
+      getNearAtm(senderID, latitude, longitude);
+    }
+
     console.log("messageAttachments: " + JSON.stringify(messageAttachments));
   }
 }
@@ -292,6 +300,72 @@ function callSendAPI(messageData) {
       console.error("Unable to send message.");
       console.error(response);
       console.error(error);
+    }
+  });
+}
+
+function getNearAtm(recipientId, latitude, longitude) {
+  var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/atms/near?lat=' + latitude + '&long=' + longitude + '&radius=500';
+
+  request({
+    headers: {
+      'Ocp-Apim-Subscription-Key': users[recipientId]['token']
+    },
+    uri: queryUrl,
+    method: 'GET'
+
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      console.log("Successfully sent atm inquiry for account for location Lat: %s, Long: %s",
+        latitude, longitude);
+
+      var parsedBody = JSON.parse(body);
+
+      if (parsedBody.length == 0) {
+        var messageData = {
+          recipient: {
+            id: recipientId
+          },
+          message: {
+            text: "Sorry, no ATM info nearby."
+          }
+        };
+
+        callSendAPI(messageData);
+        return;
+      }
+
+      for (var i = 0; i < parsedBody.length; i++) {
+        var atm = parsedBody[i];
+
+        var messageData = {
+          recipient: {
+            id: customerId
+          },
+          message: {
+            text: atm.brand + " ATM: " + atm.atmName + "\n" + "Address: " + atm.streetAddress + ", " + atm.city + ", " + atm.postCode
+          }
+        }
+
+        callSendAPI(messageData);
+      }
+
+    } else {
+      console.error("Unable to inquire account balance");
+      console.error(response);
+      console.error(error);
+
+      var messageData = {
+        recipient: {
+          id: recipientId
+        },
+        message: {
+          text: "Sorry, failed to query ATM info nearby."
+        }
+      };
+
+      callSendAPI(messageData);
+
     }
   });
 }
