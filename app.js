@@ -234,7 +234,7 @@ function sendGenericMessage(recipientId, messageText) {
           template_type: "generic",
           elements: [{
             title: "Ulster Bank",
-            subtitle: "Next-generation virtual reality",
+            subtitle: "",
             item_url: "www.ulsterbank.ie/Ireland",
             image_url: "https://pbs.twimg.com/profile_images/481434724317945859/bspl1Agb_400x400.jpeg",
             buttons: [{
@@ -248,7 +248,7 @@ function sendGenericMessage(recipientId, messageText) {
             }],
           }, {
             title: "Mortgages",
-            subtitle: "",
+            subtitle: "Your saving account looks great!",
             item_url: "http://digital.ulsterbank.ie/personal/mortgages.html",
             image_url: "http://www.irishhome.ie/wp-content/uploads/2015/08/a-mortgage-you-can-live-with-ulster-bank.jpg",
             buttons: [{
