@@ -130,10 +130,15 @@ function receivedMessage(event) {
             recipientAccountNoStr = "10000390";
             break;
           default:
-            sendTextMessage(senderID, "Can't find registered user with this name among your friends");
             break;
         }
+
         console.log("recipientAccountNoStr: " + recipientAccountNoStr);
+
+        if (recipientAccountNoStr == "") {
+          sendTextMessage(senderID, "Can't find registered user with this name among your friends");
+          return;
+        }
       } else {
         recipientAccountNoStr = recipientAccountNo.toString();
       }
