@@ -120,7 +120,7 @@ function receivedMessage(event) {
           case ' mauricio reis':
             recipientAccountNoStr = "10000374";
             break;
-          case ' julia vicente':
+          case ' julia sn':
             recipientAccountNoStr = "10000389";
             break;
           case ' jeisse rocha':
