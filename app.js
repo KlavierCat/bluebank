@@ -365,54 +365,28 @@ function getTransactionsHistory(customerId, accountType) {
 
       var parsedBody = JSON.parse(body);
 
-      var transactionHistoryMessageTest = "You don't have any transactions on your" + accountType + " account yet.";
+      var transactionHistoryMessageText = "You don't have any transactions on your" + accountType + " account yet.";
 
       if (parsedBody.length > 0) {
-         transactionHistoryMessageTest = "That is your " + accountType + " account recent transaction history.";
+         transactionHistoryMessageText = "That is your " + accountType + " account recent transaction history.";
       }
 
-      var transactionsHistoryMessage = {
-        recipient: {
-          id: customerId
-        },
-        message: {
-          text: transactionHistoryMessageTest
-        }
-      }
-
-      callSendAPI(transactionsHistoryMessage);
+      sendTextMessage(customerId, transactionHistoryMessageText);
 
       for (var i = 0; i < parsedBody.length; i++) {
         var transactionTimestamp = parsedBody[i]["transactionDateTime"].split("T");
         var transactionTimeStr = transactionTimestamp[0] + " " + transactionTimestamp[1].slice(0,8);
         var transactionInfoStr = parsedBody[i]["transactionAmount"] + "\n" + parsedBody[i]["transactionDescription"] + "\n" + transactionTimeStr;
 
-        var messageData = {
-          recipient: {
-            id: customerId
-          },
-          message: {
-            text: transactionInfoStr
-          }
-        }
-
-        callSendAPI(messageData);
+        sendTextMessage(customerId, transactionInfoStr);
       }
     } else {
       console.error("Unable to inquire transaction history");
       console.error(response);
       console.error(error);
 
-      var transactionsHistoryMessage = {
-        recipient: {
-          id: customerId
-        },
-        message: {
-          text: "Failed to inquire transaction history on your " + accountType + " account. Try again later or contact the page admin."
-        }
-      }
-
-      callSendAPI(transactionsHistoryMessage);
+      var failedMessageText = "Failed to inquire transaction history on your " + accountType + " account. Try again later or contact the page admin.";
+      sendTextMessage(customerId, failedMessageText);
     }
   });
 }
@@ -441,16 +415,7 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
     if (!error && response.statusCode == 200) {
       console.log("Successfully send: " + transactionAmount);
 
-      var messageData = {
-        recipient: {
-          id: senderId
-        },
-        message: {
-          text: serverFeedbackToUser
-        }
-      };
-
-      callSendAPI(messageData);
+      sendTextMessage(senderId, serverFeedbackToUser);
     } else {
       console.error("Unable to carry out transaction");
       console.error(response);
@@ -464,16 +429,9 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
         errorMessage = parsedBody.errorMessage;
       }
 
-      var messageData = {
-        recipient: {
-          id: senderId
-        },
-        message: {
-          text: "Transaction failed due to error: " + errorMessage + ". Please try again later or contact page admin."
-        }
-      };
+      var failedMessageText = "Transaction failed due to error: " + errorMessage + ". Please try again later or contact page admin.";
 
-      callSendAPI(messageData);
+      sendTextMessage(customerId, failedMessageText);
     }
   });
 }
@@ -510,20 +468,13 @@ function checkBalance(recipientId, bankAccountId, accountType) {
 
       var accountBalanceMessage = "Your " + accountType + " account balance is: " + accountBalance + " " + accountCurrency;
 
-      var messageData = {
-        recipient: {
-          id: recipientId
-        },
-        message: {
-          text: accountBalanceMessage
-        }
-      };
-
-      callSendAPI(messageData);
+      sendTextMessage(recipientId, accountBalanceMessage);
     } else {
       console.error("Unable to inquire account balance");
       console.error(response);
       console.error(error);
+
+      sendTextMessage(recipientId, "Failed to inquire account balance.");
     }
   });
 }
