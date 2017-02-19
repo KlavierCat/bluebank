@@ -136,7 +136,7 @@ function receivedMessage(event) {
         console.log("recipientAccountNoStr: " + recipientAccountNoStr);
 
         if (recipientAccountNoStr == "") {
-          sendTextMessage(senderID, "Can't find registered user with this name among your friends");
+          sendTextMessage(senderID, "Can't find registered user with this name among your friends. Please use full name.");
           return;
         }
       } else {
