@@ -112,23 +112,25 @@ function receivedMessage(event) {
       console.log("splitMessageText[1]: " + splitMessageText[1]);
 
       if (isNaN(recipientAccountNo)) {
+        console.log("inside switch");
         switch(splitMessageText[1]) {
-          case ' Panpan Lin':
+          case ' panpan lin':
             recipientAccountNoStr = "10000388";
             break;
-          case ' Mauricio Reis':
+          case ' mauricio reis':
             recipientAccountNoStr = "10000374";
             break;
-          case ' Julia Vicente':
+          case ' julia vicente':
             recipientAccountNoStr = "10000389";
             break;
-          case ' Jeisse Rocha':
+          case ' jeisse rocha':
             recipientAccountNoStr = "10000375";
             break;
-          case ' Ying Feng':
+          case ' ying feng':
             recipientAccountNoStr = "10000390";
             break;
           default:
+            sendTextMessage(senderID, "Can't find registered user with this name among your friends");
             break;
         }
         console.log("recipientAccountNoStr: " + recipientAccountNoStr);
