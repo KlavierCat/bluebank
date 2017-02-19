@@ -135,6 +135,16 @@ function receivedMessage(event) {
         sendGenericMessage(senderID);
         break;
 
+      case 'help':
+        sendTextMessage(senderID, "To sign up, type\nsign up. If you have already signed up, try type some of these to the chat window:\ncurrent account balance\nsaving account balance\ncurrent account transaction history\nsend 5 GBP to account XXXXX");
+        sendTextMessage(senderID, "To find your nearest ATMs, use your phone to send us your location");
+        sendTextMessage(senderID, "You can also request payments or pay others via QR code, without adding the other person as a friend, as long as the other party has also registered their bank account with us. For more information, type\nqrcode");
+        break;
+
+      case 'transaction history':
+      case 'transactions history':
+      case 'recent transactions':
+      case 'recent transaction':
       case 'current account history':
       case 'current account transactions':
       case 'current account transaction':
