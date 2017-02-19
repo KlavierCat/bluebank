@@ -440,7 +440,7 @@ function sendMoney(senderId, recipientAccountNo, transactionAmount, messageText,
         setTimeout(function () {
           if (recipientId != senderId) {
             sendTextMessage(recipientId, "You have received " + transactionAmount + " GBP in your " + recipientAccountType + " account "  + " from " + users[senderId]["givenName"] + " " + users[senderId]['familyName'] + "\n https://www.facebook.com/" + users[senderId]["facebookHandler"]);
-            sendTextMessage(senderId, users[senderId]["givenName"] + " " + users[senderId]['familyName'] + "\n https://www.facebook.com/" + users[senderId]["facebookHandler"] + " has received your fund.");
+            sendTextMessage(senderId, users[senderId]["givenName"] + " " + users[senderId]['familyName'] + "\n https://www.facebook.com/" + users[senderId]["facebookHandler"] + " has received " + transactionAmount + " GBP from you.");
           } else {
             sendTextMessage(recipientId, "Your request to save " + transactionAmount + " GBP into your saving account has been processed.");
           }
