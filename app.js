@@ -184,11 +184,7 @@ function receivedMessage(event) {
 
     sendTextMessage(senderID, "Message with attachment received");
 
-    console.log(messageAttachments[0]);
-
-    console.log(messageAttachments[0].title);
-
-    if (mm(messageAttachments[0].title, "*'s location")) {
+    if (mm(messageAttachments[0].url, "https://l.facebook.com/l.php?*www.bing.com%2Fmaps*")) {
       var latitude = messageAttachments[0].payload.coordinates.lat.toString();
       var longitude = messageAttachments[0].payload.coordinates.long.toString();
       console.log('User ' + senderID + "looking for ATM near: " + latitude + ", " + longitude);
