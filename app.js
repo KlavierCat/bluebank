@@ -215,7 +215,7 @@ function receivedPostback(event) {
 
   // When a postback is called, we'll send a message back to the sender to
   // let them know it was successful
-  sendTextMessage(senderID, "Postback called");
+  sendTextMessage(senderID, "Thanks for your interests, we'll contact you shortly.");
 }
 
 /*
@@ -233,31 +233,31 @@ function sendGenericMessage(recipientId, messageText) {
         payload: {
           template_type: "generic",
           elements: [{
-            title: "rift",
+            title: "Ulster Bank",
             subtitle: "Next-generation virtual reality",
-            item_url: "https://www.oculus.com/en-us/rift/",
-            image_url: "http://messengerdemo.parseapp.com/img/rift.png",
+            item_url: "www.ulsterbank.ie/Ireland",
+            image_url: "https://pbs.twimg.com/profile_images/481434724317945859/bspl1Agb_400x400.jpeg",
             buttons: [{
               type: "web_url",
-              url: "https://www.oculus.com/en-us/rift/",
+              url: "www.ulsterbank.ie/Ireland",
               title: "Open Web URL"
             }, {
               type: "postback",
-              title: "Call Postback",
+              title: "Request a callback",
               payload: "Payload for first bubble",
             }],
           }, {
-            title: "touch",
-            subtitle: "Your Hands, Now in VR",
-            item_url: "https://www.oculus.com/en-us/touch/",
-            image_url: "http://messengerdemo.parseapp.com/img/touch.png",
+            title: "Mortgages",
+            subtitle: "",
+            item_url: "http://digital.ulsterbank.ie/personal/mortgages.html",
+            image_url: "http://www.irishhome.ie/wp-content/uploads/2015/08/a-mortgage-you-can-live-with-ulster-bank.jpg",
             buttons: [{
               type: "web_url",
-              url: "https://www.oculus.com/en-us/touch/",
+              url: "http://digital.ulsterbank.ie/personal/mortgages.html",
               title: "Open Web URL"
             }, {
               type: "postback",
-              title: "Call Postback",
+              title: "Request a callback",
               payload: "Payload for second bubble",
             }]
           }]
