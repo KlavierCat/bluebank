@@ -101,7 +101,7 @@ function receivedMessage(event) {
 
       if (isNaN(transactionAmount)){
         console.log('user did not include a valid amount to save in message: ' + messageText);
-        sendTextMessage(senderID, "Bad request. Format for sending money is: \n send amount-of-money to bank-account-number");
+        sendTextMessage(senderID, "Bad request. Format for sending money is: \nsend amount-of-money to bank-account-number");
         return;
       } else {
         transactionAmount = transactionAmount.toString();
@@ -119,9 +119,9 @@ function receivedMessage(event) {
             }
           }
         }
-      } else {
-        sendTextMessage(senderID, "Bad request. Format for sending money is: \n send amount-of-money to bank-account-number");
-        return;
+        if (isNaN(recipientAccountNo)) {
+          sendTextMessage(senderID, "Bad request. Format for sending money is: \nsend amount-of-money to bank-account-number");
+        }
       }
 
       recipientAccountNo = recipientAccountNo.toString();
