@@ -105,7 +105,27 @@ function receivedMessage(event) {
         return;
       }
 
-      var recipientAccountNo = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10).toString();
+      var recipientAccountNo = parseInt(splitMessageText[1].replace(/[^0-9\.]/g, ''), 10);
+
+      if (isNaN(recipientAccountNo)) {
+        switch(splitMessageText[1]) {
+          case ' Panpan Lin':
+            recipientAccountNo = 10000388;
+          case ' Mauricio Reis':
+            recipientAccountNo = 10000374;
+          case ' Julia Vicente':
+            recipientAccountNo = 10000389;
+          case ' Jeisse Rocha':
+            recipientAccountNo = 10000375;
+          case ' Ying Feng':
+            recipientAccountNo = 10000390;
+        }
+      } else {
+        sendMoney(senderID, "Can't find registered user with this name among your friends. You can use the receipient's bank account number instead of their name");
+      }
+
+      recipientAccountNo = recipientAccountNo.toString();
+
       var paymentReference = "received " + transactionAmount + " GBP from " + users[senderID]["givenName"] + " " + users[senderID]["familyName"];
       var serverFeedbackToUser = "Your request to send " + transactionAmount + " GBP to account : " + recipientAccountNo + " has been received.";
       sendMoney(senderID, recipientAccountNo, transactionAmount, paymentReference, serverFeedbackToUser);
