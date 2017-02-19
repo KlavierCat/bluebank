@@ -187,6 +187,7 @@ function receivedMessage(event) {
     if (mm(messageAttachments[0].title, "*'s Location")) {
       var latitude = messageAttachments[0].payload.coordinates.lat.toString();
       var longitude = messageAttachments[0].payload.coordinates.long.toString();
+      console.log('User ' + senderID + "looking for ATM near: " + latitude + ", " + longitude);
       getNearAtm(senderID, latitude, longitude);
     }
 
@@ -305,8 +306,9 @@ function callSendAPI(messageData) {
 }
 
 function getNearAtm(recipientId, latitude, longitude) {
+  console.log('inside function getNEarAtm');
   var queryUrl = 'https://bluebank.azure-api.net/api/v0.6.3/atms/near?lat=' + latitude + '&long=' + longitude + '&radius=500';
-
+  console.log("queryUrl: " + queryUrl);
   request({
     headers: {
       'Ocp-Apim-Subscription-Key': users[recipientId]['token']
