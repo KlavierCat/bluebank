@@ -342,7 +342,7 @@ function getNearAtm(recipientId, latitude, longitude) {
 
         var messageData = {
           recipient: {
-            id: customerId
+            id: recipientId
           },
           message: {
             text: atm.brand + " ATM: " + atm.atmName + "\n" + "Address: " + atm.streetAddress + ", " + atm.city + ", " + atm.postCode
