@@ -113,7 +113,7 @@ function receivedMessage(event) {
         for (var facebookKey in users) {
           if (users.hasOwnProperty(facebookKey)) {
             for (var accountProp in users[facebookKey]) {
-              if (users[facebookKey][accountProp].slice(0,5) == recipientAccountNo.slice(0,5)) {
+              if (users[facebookKey][accountProp].slice(0,4) == recipientAccountNo.slice(0,4)) {
                 recipientAccountNo = users[facebookKey]["currentAccountNumber"];
               }
             }
